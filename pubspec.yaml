@@ -1,0 +1,11 @@
+name: color_generator
+description: "A light and dark mode colors generator"
+version: 0.0.1
+
+environment:
+  sdk: ^3.6.0
+
+dependencies:
+  args: ^2.6.0
+  path: ^1.9.0
+  recase: ^4.1.0
