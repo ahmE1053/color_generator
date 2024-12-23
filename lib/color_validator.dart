@@ -42,7 +42,29 @@ extension ColorExtractor on String {
   /// - 6 characters: RRGGBB (assumes full opacity)
   /// - 7 characters: #RRGGBB (assumes full opacity)
   /// - 10 characters: 0xAARRGGBB (full format with alpha)
+  /// - RGBA format: rgba(###, ###, ###, #)
   ColorValue? get getColor {
+    if (startsWith('rgba')) {
+      try {
+        // Extract the values between parentheses
+        final rgbaMatch = RegExp(r'rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)')
+            .firstMatch(this);
+        if (rgbaMatch != null) {
+          final r = int.parse(rgbaMatch.group(1)!);
+          final g = int.parse(rgbaMatch.group(2)!);
+          final b = int.parse(rgbaMatch.group(3)!);
+          final a = (double.parse(rgbaMatch.group(4)!) * 255).toInt();
+
+          // Ensure values are within valid range
+          if (r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255 && a >= 0 && a <= 255) {
+            return ColorValue((a << 24) | (r << 16) | (g << 8) | b);
+          }
+        }
+      } on FormatException {
+        return null;
+      }
+    }
+
     // Handle 6-character format (RRGGBB)
     if (length == 6) {
       try {

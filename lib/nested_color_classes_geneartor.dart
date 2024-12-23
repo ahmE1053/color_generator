@@ -9,7 +9,7 @@ String nestedColorClassesGenerator(
   final buffer = StringBuffer();
 
   buffer.writeln();
-  final pascalKey = ReCase(concatedKey).pascalCase;
+  final pascalKey = '_${ReCase(concatedKey).pascalCase}';
 
 //@formatter:off
     buffer.write('''
@@ -20,11 +20,11 @@ class $pascalKey {
   
   //colors affected by theme change
   ${nestedColorModel.rootColorOnlyKeys.map((e) => "final Color $e;",).join("\n\t")}
-  ${nestedColorModel.rootMapOnlyKeys.map((e) => "final ${ReCase('${concatedKey}_$e').pascalCase} $e;",).join("\n\t")}
+  ${nestedColorModel.rootMapOnlyKeys.map((e) => "final _${ReCase('${concatedKey}_$e').pascalCase} $e;",).join("\n\t")}
   
   $pascalKey copyWith({
     ${nestedColorModel.rootColorOnlyKeys.map((e) => "Color? $e,",).join("\n\t\t")}
-    ${nestedColorModel.rootMapOnlyKeys.map((e) => "${ReCase('${concatedKey}_$e').pascalCase}? $e,",).join("\n\t\t")}
+    ${nestedColorModel.rootMapOnlyKeys.map((e) => "_${ReCase('${concatedKey}_$e').pascalCase}? $e,",).join("\n\t\t")}
   }) {
     return $pascalKey._(
       ${nestedColorModel.light.keys.map((e) => "$e: $e ?? this.$e,",).join("\n\t\t\t")}
@@ -44,12 +44,12 @@ class $pascalKey {
   
   static const light = $pascalKey._(
     ${nestedColorModel.rootColorOnlyKeys.map((e) => "$e: Color(${nestedColorModel.light[e]}),",).join("\n\t\t")}
-    ${nestedColorModel.rootMapOnlyKeys.map((e) => "$e: ${ReCase('${concatedKey}_$e').pascalCase}.light,",).join("\n\t\t")}
+    ${nestedColorModel.rootMapOnlyKeys.map((e) => "$e: _${ReCase('${concatedKey}_$e').pascalCase}.light,",).join("\n\t\t")}
   );
   
   static const dark = $pascalKey._(
     ${nestedColorModel.rootColorOnlyKeys.map((e) => "$e: Color(${nestedColorModel.dark[e]}),",).join("\n\t\t")}
-    ${nestedColorModel.rootMapOnlyKeys.map((e) => "$e: ${ReCase('${concatedKey}_$e').pascalCase}.dark,",).join("\n\t\t")}
+    ${nestedColorModel.rootMapOnlyKeys.map((e) => "$e: _${ReCase('${concatedKey}_$e').pascalCase}.dark,",).join("\n\t\t")}
   );
 }
 ''');

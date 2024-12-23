@@ -30,12 +30,12 @@ class AppColors extends ThemeExtension<AppColors> {
   
   //colors affected by theme change
   ${colorsModel.rootColorOnlyKeys.map((e) => "final Color $e;",).join("\n\t")}
-  ${colorsModel.rootMapOnlyKeys.map((e) => "final ${ReCase(e).pascalCase} $e;",).join("\n\t")}
+  ${colorsModel.rootMapOnlyKeys.map((e) => "final _${ReCase(e).pascalCase} $e;",).join("\n\t")}
   
   @override
   ThemeExtension<AppColors> copyWith({
     ${colorsModel.rootColorOnlyKeys.map((e) => "Color? $e,",).join("\n\t\t")}
-    ${colorsModel.rootMapOnlyKeys.map((e) => "${ReCase(e).pascalCase}? $e,",).join("\n\t\t")}
+    ${colorsModel.rootMapOnlyKeys.map((e) => "_${ReCase(e).pascalCase}? $e,",).join("\n\t\t")}
   }) {
     return AppColors._(
       ${colorsModel.light.keys.map((e) => "$e: $e ?? this.$e,",).join("\n\t\t\t")}
@@ -56,12 +56,12 @@ class AppColors extends ThemeExtension<AppColors> {
   
   static const light = AppColors._(
     ${colorsModel.rootColorOnlyKeys.map((e) => "$e: Color(${colorsModel.light[e]}),",).join("\n\t\t")}
-    ${colorsModel.rootMapOnlyKeys.map((e) => "$e: ${ReCase(e).pascalCase}.light,",).join("\n\t\t")}
+    ${colorsModel.rootMapOnlyKeys.map((e) => "$e: _${ReCase(e).pascalCase}.light,",).join("\n\t\t")}
   );
   
   static const dark = AppColors._(
     ${colorsModel.rootColorOnlyKeys.map((e) => "$e: Color(${colorsModel.dark[e]}),",).join("\n\t\t")}
-    ${colorsModel.rootMapOnlyKeys.map((e) => "$e: ${ReCase(e).pascalCase}.dark,",).join("\n\t\t")}
+    ${colorsModel.rootMapOnlyKeys.map((e) => "$e: _${ReCase(e).pascalCase}.dark,",).join("\n\t\t")}
   );
   
   // static colors
