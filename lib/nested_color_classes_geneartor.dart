@@ -1,3 +1,4 @@
+import 'package:color_generator/box_shadow_parser.dart';
 import 'package:color_generator/colors_model.dart';
 import 'package:recase/recase.dart';
 
@@ -20,10 +21,12 @@ class $pascalKey {
   
   //colors affected by theme change
   ${nestedColorModel.rootColorOnlyKeys.map((e) => "final Color $e;",).join("\n\t")}
+  ${nestedColorModel.rootShadowOnlyKeys.map((e) => "final BoxShadow $e;",).join("\n\t")}
   ${nestedColorModel.rootMapOnlyKeys.map((e) => "final _${ReCase('${concatedKey}_$e').pascalCase} $e;",).join("\n\t")}
   
   $pascalKey copyWith({
     ${nestedColorModel.rootColorOnlyKeys.map((e) => "Color? $e,",).join("\n\t\t")}
+    ${nestedColorModel.rootShadowOnlyKeys.map((e) => "BoxShadow? $e,",).join("\n\t\t")}
     ${nestedColorModel.rootMapOnlyKeys.map((e) => "_${ReCase('${concatedKey}_$e').pascalCase}? $e,",).join("\n\t\t")}
   }) {
     return $pascalKey._(
@@ -38,21 +41,24 @@ class $pascalKey {
   ) {
     return $pascalKey._(
       ${nestedColorModel.rootColorOnlyKeys.map((e) => "$e: Color.lerp(x.$e, y.$e, t) ?? $e,",).join("\n\t\t\t")}
+      ${nestedColorModel.rootShadowOnlyKeys.map((e) => "$e: BoxShadow.lerp(x.$e, y.$e, t) ?? $e,",).join("\n\t\t\t")}
       ${nestedColorModel.rootMapOnlyKeys.map((e) => "$e: $e.lerp(x.$e, y.$e, t),",).join("\n\t\t\t")}
     );
   }
   
   static const light = $pascalKey._(
     ${nestedColorModel.rootColorOnlyKeys.map((e) => "$e: Color(${nestedColorModel.light[e]}),",).join("\n\t\t")}
+    ${nestedColorModel.rootShadowOnlyKeys.map((e) => "$e: ${(nestedColorModel.light[e] as Map).shadowString},",).join("\n\t\t")}
     ${nestedColorModel.rootMapOnlyKeys.map((e) => "$e: _${ReCase('${concatedKey}_$e').pascalCase}.light,",).join("\n\t\t")}
   );
   
   static const dark = $pascalKey._(
     ${nestedColorModel.rootColorOnlyKeys.map((e) => "$e: Color(${nestedColorModel.dark[e]}),",).join("\n\t\t")}
+    ${nestedColorModel.rootShadowOnlyKeys.map((e) => "$e: ${(nestedColorModel.dark[e] as Map).shadowString},",).join("\n\t\t")}
     ${nestedColorModel.rootMapOnlyKeys.map((e) => "$e: _${ReCase('${concatedKey}_$e').pascalCase}.dark,",).join("\n\t\t")}
   );
 }
-''');
+'''.split('\n').where((element) => element.trim().isNotEmpty,).join('\n'));
 //@formatter:on
   if (nestedColorModel.rootMapOnlyKeys.isNotEmpty) {
     for (var e in nestedColorModel.rootMapOnlyKeys) {
