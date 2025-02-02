@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:color_generator/box_shadow_parser.dart';
 import 'package:color_generator/colors_model.dart';
 import 'package:color_generator/nested_color_classes_geneartor.dart';
 import 'package:color_generator/parser.dart';
@@ -30,11 +31,13 @@ class AppColors extends ThemeExtension<AppColors> {
   
   //colors affected by theme change
   ${colorsModel.rootColorOnlyKeys.map((e) => "final Color $e;",).join("\n\t")}
+  ${colorsModel.rootShadowOnlyKeys.map((e) => "final BoxShadow $e;",).join("\n\t")}
   ${colorsModel.rootMapOnlyKeys.map((e) => "final _${ReCase(e).pascalCase} $e;",).join("\n\t")}
   
   @override
   ThemeExtension<AppColors> copyWith({
     ${colorsModel.rootColorOnlyKeys.map((e) => "Color? $e,",).join("\n\t\t")}
+    ${colorsModel.rootShadowOnlyKeys.map((e) => "BoxShadow? $e,",).join("\n\t\t")}
     ${colorsModel.rootMapOnlyKeys.map((e) => "_${ReCase(e).pascalCase}? $e,",).join("\n\t\t")}
   }) {
     return AppColors._(
@@ -50,24 +53,27 @@ class AppColors extends ThemeExtension<AppColors> {
     if (other == null) return this;
     return AppColors._(
       ${colorsModel.rootColorOnlyKeys.map((e) => "$e: Color.lerp($e, other.$e, t) ?? $e,",).join("\n\t\t\t")}
+      ${colorsModel.rootShadowOnlyKeys.map((e) => "$e: BoxShadow.lerp($e, other.$e, t) ?? $e,",).join("\n\t\t\t")}
       ${colorsModel.rootMapOnlyKeys.map((e) => "$e: $e.lerp($e, other.$e, t),",).join("\n\t\t\t")}
     );
   }
   
   static const light = AppColors._(
     ${colorsModel.rootColorOnlyKeys.map((e) => "$e: Color(${colorsModel.light[e]}),",).join("\n\t\t")}
+    ${colorsModel.rootShadowOnlyKeys.map((e) => "$e: ${(colorsModel.light[e] as Map).shadowString},",).join("\n\t\t")}
     ${colorsModel.rootMapOnlyKeys.map((e) => "$e: _${ReCase(e).pascalCase}.light,",).join("\n\t\t")}
   );
   
   static const dark = AppColors._(
     ${colorsModel.rootColorOnlyKeys.map((e) => "$e: Color(${colorsModel.dark[e]}),",).join("\n\t\t")}
+    ${colorsModel.rootShadowOnlyKeys.map((e) => "$e: ${(colorsModel.dark[e] as Map).shadowString},",).join("\n\t\t")}
     ${colorsModel.rootMapOnlyKeys.map((e) => "$e: _${ReCase(e).pascalCase}.dark,",).join("\n\t\t")}
   );
   
   // static colors
   ${colorsModel.static.entries.map((e) => 'static const ${e.key} = Color(${e.value});').join("\n\t")}
 }
-'''
+'''.split('\n').where((element) => element.trim().isNotEmpty,).join('\n')
   );
   if (colorsModel.rootMapOnlyKeys.isNotEmpty) {
     for (var e in colorsModel.rootMapOnlyKeys) {

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/args.dart';
+import 'package:color_generator/box_shadow_parser.dart';
 import 'package:color_generator/color_validator.dart';
 import 'package:path/path.dart';
 
@@ -63,7 +64,7 @@ Map<String, Object> getColorsMap(ArgResults args, String optionName) {
 /// [optionName] - The name of the option/file being validated (for error messages)
 ///
 /// Throws FormatException with detailed messages for various validation failures.
-void validateMapFormat(dynamic map, String optionName) {
+void validateMapFormat(dynamic map, String optionName, [bool nested = false]) {
   if (map is! Map) {
     throw FormatException(
       '''
@@ -94,6 +95,24 @@ Keys can't be "light" or "dark"
       );
     }
     final value = entry.value;
+    final key = entry.key;
+    if (key is String && key.startsWith('shadow')) {
+      if (value is! Map) {
+        throw FormatException(
+          "shadow value must be a map in the following format:\n"
+          "shadow\": {\n"
+          "  \"offsetX\": double,\n"
+          "  \"offsetY\": double,\n"
+          "  \"blur\": double,\n"
+          "  \"spread\": double,\n"
+          "  \"color\": String,\n"
+          ")",
+          optionName,
+        );
+      }
+      value.validateBoxShadow(optionName);
+      continue;
+    }
     if (value is String) {
       final validColor = value.getColor;
       if (validColor == null) {
@@ -113,7 +132,7 @@ Valid formats:
     } else if (value is Map) {
       // Recursively validate nested maps
       try {
-        validateMapFormat(value, optionName);
+        validateMapFormat(value, optionName, true);
       } catch (e) {
         // Enhance nested error messages with parent key context
         if (e is FormatException) {

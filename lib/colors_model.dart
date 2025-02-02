@@ -8,6 +8,7 @@ class ColorsModel {
   final Map dark;
   final Map static;
   final String outputPath;
+  final Iterable<String> rootShadowOnlyKeys;
   final Iterable<String> rootColorOnlyKeys;
   final Iterable<String> rootMapOnlyKeys;
 
@@ -18,6 +19,7 @@ class ColorsModel {
     required this.outputPath,
     required this.rootColorOnlyKeys,
     required this.rootMapOnlyKeys,
+    required this.rootShadowOnlyKeys,
   });
 
   factory ColorsModel(ArgResults args) {
@@ -32,6 +34,7 @@ class ColorsModel {
       static: staticFile,
       outputPath: args.option('output')!,
       rootColorOnlyKeys: lightFile.rootColorOnlyKeys,
+      rootShadowOnlyKeys: lightFile.rootShadowOnlyKeys,
       rootMapOnlyKeys: lightFile.rootMapOnlyKeys,
     );
   }
@@ -42,6 +45,7 @@ class ColorsModel {
       dark: dark,
       rootColorOnlyKeys: light.rootColorOnlyKeys,
       rootMapOnlyKeys: dark.rootMapOnlyKeys,
+      rootShadowOnlyKeys: dark.rootShadowOnlyKeys,
       static: static,
       outputPath: outputPath,
     );
@@ -49,9 +53,16 @@ class ColorsModel {
 }
 
 extension ColorsOnlyExtension on Map {
-  Iterable<String> get rootColorOnlyKeys =>
-      entries.where((element) => element.value is String).map((e) => e.key);
+  Iterable<String> get rootColorOnlyKeys => entries
+      .where((element) => element.value is String && element.value != 'shadow')
+      .map((e) => e.key);
 
-  Iterable<String> get rootMapOnlyKeys =>
-      entries.where((element) => element.value is Map).map((e) => e.key);
+  Iterable<String> get rootShadowOnlyKeys => entries
+      .where((element) => (element.key as String).startsWith('shadow'))
+      .map((e) => e.key);
+
+  Iterable<String> get rootMapOnlyKeys => entries
+      .where((element) =>
+          element.value is Map && !(element.key as String).startsWith('shadow'))
+      .map((e) => e.key);
 }
